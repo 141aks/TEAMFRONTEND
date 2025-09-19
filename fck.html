@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Nabha Health Connect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url(https://wallpapers.com/images/hd/4k-tech-fi904sfb2h6pmfhs.jpg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      margin: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 220px;
+      text-decoration: none;
+      font-weight: bold;
+      color: black;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      background: #f0f4ff;
+      transform: scale(1.05);
+    }
+
+    .profile {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+    }
+
+    .profile img {
+      width: 30px;
+      height: 30px;
+    }
+
+    section {
+      display: none;
+      padding: 20px;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #2563eb;
+      color: white;
+    }
+
+    td a {
+      color: #2563eb;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    td a:hover {
+      text-decoration: underline;
+    }
+
+    .available {
+      background: green;
+      color: white;
+      border-radius: 6px;
+      padding: 4px 8px;
+    }
+
+    .not-available {
+      background: red;
+      color: white;
+      border-radius: 6px;
+      padding: 4px 8px;
+    }
+
+    .video-box {
+      background: black;
+      width: 300px;
+      height: 200px;
+      border-radius: 10px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>Nabha Health Connect</header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#availability" class="card" target="_blank">🩺 Doctor Availability</a>
+    <a href="#telemedicine" class="card" target="_blank">📞 Telemedicine</a>
+    <a href="#medicine" class="card" target="_blank">💊 Medicine Stock</a>
+    <div class="profile">Profile <img src="default-profile-picture-grey-male-icon.svg" alt="profile"></div>
+  </nav>
+
+  <!-- Doctor Availability -->
+  <section id="availability">
+    <h2 style="color:white; text-align:center;">Doctor Availability</h2>
+    <table>
+      <tr>
+        <th>Doctor</th>
+        <th>Specialization</th>
+        <th>Time</th>
+        <th>Status</th>
+      </tr>
+      <tr>
+        <td><a href="#telemedicine" target="_blank" onclick="setDoctor('Dr. Kaur')">Dr. Kaur</a></td>
+        <td>Pediatrician</td>
+        <td>10am - 2pm</td>
+        <td class="available">Available</td>
+      </tr>
+      <tr>
+        <td><a href="#telemedicine" target="_blank" onclick="setDoctor('Dr. Singh')">Dr. Singh</a></td>
+        <td>Orthopedic</td>
+        <td>2pm - 5pm</td>
+        <td class="not-available">Not Available</td>
+      </tr>
+      <tr>
+        <td><a href="#telemedicine" target="_blank" onclick="setDoctor('Dr. Sharma')">Dr. Sharma</a></td>
+        <td>Cardiologist</td>
+        <td>9am - 12pm</td>
+        <td class="available">Available</td>
+      </tr>
+      <tr>
+        <td><a href="#telemedicine" target="_blank" onclick="setDoctor('Dr. Verma')">Dr. Verma</a></td>
+        <td>Neurologist</td>
+        <td>4pm - 8pm</td>
+        <td class="available">Available</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- Telemedicine -->
+  <section id="telemedicine">
+    <h2 style="color:white; text-align:center;">Telemedicine Consultation</h2>
+    <div style="background:white; width:80%; margin:20px auto; padding:15px; border-radius:10px;">
+      <h3>Patient Details</h3>
+      <p><strong>Selected Doctor:</strong> <span id="selectedDoctor">None</span></p>
+      <input type="text" placeholder="Name" style="width:100%;padding:8px;margin:5px 0;">
+      <input type="number" placeholder="Age" style="width:100%;padding:8px;margin:5px 0;">
+      <input type="text" placeholder="Village" style="width:100%;padding:8px;margin:5px 0;">
+      <textarea placeholder="Describe your health issue..." style="width:100%;padding:8px;margin:5px 0;"></textarea>
+    </div>
+    <div class="video-box">Doctor</div>
+    <div class="video-box">Patient</div>
+  </section>
+
+  <!-- Medicine Stock -->
+  <section id="medicine">
+    <h2 style="color:white; text-align:center;">Medicine Stock Dashboard</h2>
+    <table>
+      <tr>
+        <th>Medicine</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Price</th>
+        <th>Precautions</th>
+      </tr>
+      <tr>
+        <td>Aspirin</td>
+        <td>Pain Relief</td>
+        <td class="available">In Stock</td>
+        <td>₹20</td>
+        <td>Store in a cool, dry place.</td>
+      </tr>
+      <tr>
+        <td>Azithromycin</td>
+        <td>Antibiotic</td>
+        <td class="not-available">Out of Stock</td>
+        <td>₹500</td>
+        <td>Take only prescribed dose.</td>
+      </tr>
+    </table>
+  </section>
+
+  <script>
+    // Save selected doctor in localStorage so new tab can read it
+    function setDoctor(name) {
+      localStorage.setItem("selectedDoctor", name);
+    }
+
+    // When Telemedicine section loads, show selected doctor
+    document.addEventListener("DOMContentLoaded", function () {
+      const doc = localStorage.getItem("selectedDoctor");
+      if (doc) {
+        document.getElementById("selectedDoctor").textContent = doc;
+      }
+    });
+  </script>
+
+</body>
+</html>

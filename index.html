@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nabha Health Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-blue: #3b82f6;
+            --accent-teal: #14b8a6;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --text-white: #ffffff;
+            --text-dark: #1f2937;
+            --bg-light: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Floating particles animation */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        header {
+            background: rgba(37, 99, 235, 0.95);
+            backdrop-filter: blur(20px);
+            color: var(--text-white);
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .header-icon {
+            font-size: 32px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 30px 20px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            width: 220px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-dark);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .card-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .profile {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px 25px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .profile:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .profile:hover img {
+            transform: scale(1.1);
+        }
+
+        section {
+            margin: 40px 0 30px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .section-title {
+            color: var(--text-white);
+            text-align: center;
+            font-size: 32px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--text-white);
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 14px;
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(37, 99, 235, 0.05);
+            transform: scale(1.01);
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .available {
+            background: linear-gradient(135deg, var(--success-green), #059669);
+            color: var(--text-white);
+            animation: statusPulse 2s infinite;
+        }
+
+        .not-available {
+            background: linear-gradient(135deg, var(--danger-red), #dc2626);
+            color: var(--text-white);
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .specialization {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .time-slot {
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            background: rgba(37, 99, 235, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .booking-box {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 200px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 1s ease-out 1s both;
+            z-index: 1000;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .booking-box h3 {
+            margin: 0 0 15px;
+            font-size: 18px;
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .booking-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-white);
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .booking-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-teal));
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            header {
+                font-size: 22px;
+                padding: 15px 20px;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .card {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .section-title {
+                font-size: 26px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px 8px;
+            }
+
+            .booking-box {
+                bottom: 20px;
+                right: 20px;
+                width: 160px;
+                padding: 15px;
+            }
+        }
+
+        /* Loading animations for table rows */
+        tbody tr {
+            animation: tableRowFadeIn 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        tbody tr:nth-child(2) { animation-delay: 0.15s; }
+        tbody tr:nth-child(3) { animation-delay: 0.2s; }
+        tbody tr:nth-child(4) { animation-delay: 0.25s; }
+        tbody tr:nth-child(5) { animation-delay: 0.3s; }
+        tbody tr:nth-child(6) { animation-delay: 0.35s; }
+        tbody tr:nth-child(7) { animation-delay: 0.4s; }
+        tbody tr:nth-child(8) { animation-delay: 0.45s; }
+        tbody tr:nth-child(9) { animation-delay: 0.5s; }
+        tbody tr:nth-child(10) { animation-delay: 0.55s; }
+
+        @keyframes tableRowFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 0.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <span class="header-icon">🏥</span>
+            <span>Nabha Health Connect</span>
+            <span class="header-icon">🩺</span>
+        </div>
+    </header>
+
+    <nav>
+        <a href="main2.html" target="_blank" class="card">
+            <span class="card-icon">📞</span>Telemedicine
+        </a>
+        <a href="main3.html" target="_blank" class="card">
+            <span class="card-icon">💊</span>Medicine Stock
+        </a>
+        <a href="main4.html" target="_blank" class="profile">
+            <span>Profile</span>
+            <img src="default-profile-picture-grey-male-icon.svg" alt="Profile" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNFNUU3RUIiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNiIgcj0iNiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMzAgMzJDMzAgMjYuNDc3MiAyNS41MjI4IDIyIDIwIDIyQzE0LjQ3NzIgMjIgMTAgMjYuNDc3MiAxMCAzMkgzMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+'" />
+        </a>
+    </nav>
+
+    <section>
+        <h2 class="section-title">👨‍⚕️ Doctor Availability</h2>
+    </section>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Specialization</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="doctor-name">Dr. Kaur</td>
+                    <td class="specialization">Pediatrician</td>
+                    <td><span class="time-slot">10am - 2pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Singh</td>
+                    <td class="specialization">Orthopedic</td>
+                    <td><span class="time-slot">2pm - 5pm</span></td>
+                    <td><span class="status not-available">Not Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Sharma</td>
+                    <td class="specialization">Cardiologist</td>
+                    <td><span class="time-slot">9am - 12pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Verma</td>
+                    <td class="specialization">Neurologist</td>
+                    <td><span class="time-slot">4pm - 8pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Gupta</td>
+                    <td class="specialization">Dermatologist</td>
+                    <td><span class="time-slot">10am - 2pm</span></td>
+                    <td><span class="status not-available">Not Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Mehta</td>
+                    <td class="specialization">Psychiatrist</td>
+                    <td><span class="time-slot">2pm - 5pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Joshi</td>
+                    <td class="specialization">Oncologist</td>
+                    <td><span class="time-slot">9am - 12pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Kapoor</td>
+                    <td class="specialization">Gynecologist</td>
+                    <td><span class="time-slot">4pm - 8pm</span></td>
+                    <td><span class="status not-available">Not Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Reddy</td>
+                    <td class="specialization">ENT Specialist</td>
+                    <td><span class="time-slot">10am - 2pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Nair</td>
+                    <td class="specialization">General Physician</td>
+                    <td><span class="time-slot">2pm - 5pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Iyer</td>
+                    <td class="specialization">Endocrinologist</td>
+                    <td><span class="time-slot">9am - 12pm</span></td>
+                    <td><span class="status not-available">Not Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Khan</td>
+                    <td class="specialization">Pulmonologist</td>
+                    <td><span class="time-slot">10am - 2pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Bhatia</td>
+                    <td class="specialization">Nephrologist</td>
+                    <td><span class="time-slot">4pm - 8pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Das</td>
+                    <td class="specialization">Radiologist</td>
+                    <td><span class="time-slot">2pm - 5pm</span></td>
+                    <td><span class="status not-available">Not Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Mukherjee</td>
+                    <td class="specialization">Dentist</td>
+                    <td><span class="time-slot">9am - 12pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Sinha</td>
+                    <td class="specialization">Gastroenterologist</td>
+                    <td><span class="time-slot">10am - 2pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Roy</td>
+                    <td class="specialization">Urologist</td>
+                    <td><span class="time-slot">4pm - 8pm</span></td>
+                    <td><span class="status not-available">Not Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Chatterjee</td>
+                    <td class="specialization">Rheumatologist</td>
+                    <td><span class="time-slot">2pm - 5pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+                <tr>
+                    <td class="doctor-name">Dr. Rao</td>
+                    <td class="specialization">Ophthalmologist</td>
+                    <td><span class="time-slot">9am - 12pm</span></td>
+                    <td><span class="status available">Available</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <div class="booking-box">
+            <h3>📅 Book Appointment</h3>
+            <a href="main5.html" target="_blank" class="booking-btn">
+                💻 Online Booking
+            </a>
+        </div>
+    </footer>
+
+</body>
+
+</html>

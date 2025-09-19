@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medicine Stock Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 118, 117, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(255, 204, 112, 0.3) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      33% {
+        transform: translateY(-20px) rotate(120deg);
+      }
+
+      66% {
+        transform: translateY(20px) rotate(240deg);
+      }
+    }
+
+    /* Header styles */
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+    }
+
+    .header-icon {
+      display: inline-block;
+      animation: pulse 2s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    /* Search container */
+    .search {
+      text-align: center;
+      margin: 30px auto;
+      max-width: 600px;
+      padding: 0 20px;
+      animation: slideUp 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .search-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 15px 50px 15px 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .search input:focus {
+      border-color: #667eea;
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #667eea;
+      font-size: 20px;
+      animation: searchPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes searchPulse {
+
+      0%,
+      100% {
+        opacity: 0.7;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* Stats cards */
+    .stats-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px auto;
+      flex-wrap: wrap;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      min-width: 150px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      animation: cardFloat 0.8s ease-out;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes cardFloat {
+      from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .stat-in-stock {
+      color: #48bb78;
+    }
+
+    .stat-low-stock {
+      color: #ed8936;
+    }
+
+    .stat-out-stock {
+      color: #f56565;
+    }
+
+    /* Table container */
+    .table-container {
+      margin: 30px auto;
+      padding: 0 20px;
+      max-width: 1200px;
+      animation: slideUp 0.8s ease-out 0.4s both;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      position: relative;
+    }
+
+    th::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: headerShine 3s ease-in-out infinite;
+    }
+
+    @keyframes headerShine {
+
+      0%,
+      100% {
+        transform: translateX(-100%);
+      }
+
+      50% {
+        transform: translateX(100%);
+      }
+    }
+
+    td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    tr:hover td {
+      background: rgba(102, 126, 234, 0.1);
+      transform: scale(1.02);
+    }
+
+    /* Status badges */
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .in-stock {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      animation: statusGlow 2s ease-in-out infinite alternate;
+    }
+
+    .low-stock {
+      background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+      animation: statusPulse 1.5s ease-in-out infinite;
+    }
+
+    .out-of-stock {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      animation: statusBlink 1s ease-in-out infinite;
+    }
+
+    @keyframes statusGlow {
+      from {
+        box-shadow: 0 2px 10px rgba(72, 187, 120, 0.3);
+      }
+
+      to {
+        box-shadow: 0 4px 20px rgba(72, 187, 120, 0.6);
+      }
+    }
+
+    @keyframes statusPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes statusBlink {
+
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
+
+      25%,
+      75% {
+        opacity: 0.7;
+      }
+    }
+
+    /* Price styling */
+    .price {
+      font-weight: bold;
+      color: #667eea;
+      font-size: 16px;
+    }
+
+    /* Precautions column */
+    .precautions {
+      font-size: 13px;
+      color: #666;
+      text-align: left;
+      max-width: 200px;
+    }
+
+    /* Floating shapes */
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .shape {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: floatShapes 15s infinite linear;
+    }
+
+    .shape:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+      width: 60px;
+      height: 60px;
+      left: 70%;
+      animation-delay: 5s;
+    }
+
+    .shape:nth-child(3) {
+      width: 40px;
+      height: 40px;
+      left: 30%;
+      animation-delay: 10s;
+    }
+
+    @keyframes floatShapes {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .table-container {
+        padding: 0 10px;
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+      }
+
+      .stats-container {
+        gap: 15px;
+        padding: 0 15px;
+      }
+
+      .stat-card {
+        min-width: 120px;
+        padding: 15px;
+      }
+
+      header {
+        font-size: 24px;
+        padding: 15px;
+      }
+
+      .precautions {
+        max-width: 150px;
+        font-size: 12px;
+      }
+    }
+
+    /* Loading animation */
+    @keyframes tableLoad {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    tbody tr {
+      animation: tableLoad 0.6s ease-out;
+    }
+
+    tbody tr:nth-child(odd) {
+      animation-delay: 0.1s;
+    }
+
+    tbody tr:nth-child(even) {
+      animation-delay: 0.2s;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating decorative shapes -->
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+
+  <header>
+    <span class="header-icon">💊</span>
+    Medicine Stock Dashboard
+  </header>
+
+  <!-- Search bar -->
+  <div class="search">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="🔍 Search medicines, categories, or precautions...">
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+
+  <!-- Statistics cards -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-number stat-in-stock" id="inStockCount">12</div>
+      <div class="stat-label">In Stock</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number stat-low-stock" id="lowStockCount">7</div>
+      <div class="stat-label">Low Stock</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number stat-out-stock" id="outStockCount">1</div>
+      <div class="stat-label">Out of Stock</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" style="color: #667eea;" id="totalCount">20</div>
+      <div class="stat-label">Total Medicines</div>
+    </div>
+  </div>
+
+  <!-- Medicine table -->
+  <div class="table-container">
+    <table id="medicineTable">
+      <thead>
+        <tr>
+          <th>💊 Medicine</th>
+          <th>📋 Category</th>
+          <th>📦 Stock Status</th>
+          <th>💰 Price (₹)</th>
+          <th>⚠️ Precautions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Aspirin</strong></td>
+          <td>Pain Relief</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹20</span></td>
+          <td class="precautions">Store in a cool, dry place.</td>
+        </tr>
+        <tr>
+          <td><strong>Metformin</strong></td>
+          <td>Diabetes</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹20</span></td>
+          <td class="precautions">Take after meals.</td>
+        </tr>
+        <tr>
+          <td><strong>Azithromycin</strong></td>
+          <td>Antibiotic</td>
+          <td><span class="status-badge out-of-stock">Out of Stock</span></td>
+          <td><span class="price">₹500</span></td>
+          <td class="precautions">Take only prescribed dose.</td>
+        </tr>
+        <tr>
+          <td><strong>Cough Syrup</strong></td>
+          <td>Respiratory</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹100</span></td>
+          <td class="precautions">Store in a cool, dry place.</td>
+        </tr>
+        <tr>
+          <td><strong>Vitamin C</strong></td>
+          <td>Supplement</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹10</span></td>
+          <td class="precautions">Complete full course.</td>
+        </tr>
+        <tr>
+          <td><strong>Ibuprofen</strong></td>
+          <td>Pain Relief</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹50</span></td>
+          <td class="precautions">Complete full course.</td>
+        </tr>
+        <tr>
+          <td><strong>Losartan</strong></td>
+          <td>Blood Pressure</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹50</span></td>
+          <td class="precautions">Store in a cool, dry place.</td>
+        </tr>
+        <tr>
+          <td><strong>Atorvastatin</strong></td>
+          <td>Cholesterol</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹200</span></td>
+          <td class="precautions">Take only prescribed dose.</td>
+        </tr>
+        <tr>
+          <td><strong>Cetirizine</strong></td>
+          <td>Allergy</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹20</span></td>
+          <td class="precautions">Avoid alcohol while taking this medicine.</td>
+        </tr>
+        <tr>
+          <td><strong>Hydroxychloroquine</strong></td>
+          <td>Antimalarial</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹500</span></td>
+          <td class="precautions">Take after meals.</td>
+        </tr>
+        <tr>
+          <td><strong>Omeprazole</strong></td>
+          <td>Acidity</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹5</span></td>
+          <td class="precautions">Complete full course.</td>
+        </tr>
+        <tr>
+          <td><strong>Salbutamol</strong></td>
+          <td>Respiratory</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹50</span></td>
+          <td class="precautions">Complete full course.</td>
+        </tr>
+        <tr>
+          <td><strong>Doxycycline</strong></td>
+          <td>Antibiotic</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹100</span></td>
+          <td class="precautions">Take after meals.</td>
+        </tr>
+        <tr>
+          <td><strong>Prednisolone</strong></td>
+          <td>Steroid</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹20</span></td>
+          <td class="precautions">Take after meals.</td>
+        </tr>
+        <tr>
+          <td><strong>Ranitidine</strong></td>
+          <td>Acidity</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹20</span></td>
+          <td class="precautions">Store in a cool, dry place.</td>
+        </tr>
+        <tr>
+          <td><strong>Amiodarone</strong></td>
+          <td>Heart</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹50</span></td>
+          <td class="precautions">Complete full course.</td>
+        </tr>
+        <tr>
+          <td><strong>Clopidogrel</strong></td>
+          <td>Blood Thinner</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹10</span></td>
+          <td class="precautions">Avoid alcohol while taking this medicine.</td>
+        </tr>
+        <tr>
+          <td><strong>Levothyroxine</strong></td>
+          <td>Thyroid</td>
+          <td><span class="status-badge in-stock">In Stock</span></td>
+          <td><span class="price">₹200</span></td>
+          <td class="precautions">Take after meals.</td>
+        </tr>
+        <tr>
+          <td><strong>Calcium Tablets</strong></td>
+          <td>Supplement</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹50</span></td>
+          <td class="precautions">May cause drowsiness. Avoid driving.</td>
+        </tr>
+        <tr>
+          <td><strong>Zinc Tablets</strong></td>
+          <td>Supplement</td>
+          <td><span class="status-badge low-stock">Low Stock</span></td>
+          <td><span class="price">₹5</span></td>
+          <td class="precautions">Store in a cool, dry place.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+      const table = document.getElementById('medicineTable');
+      const rows = table.getElementsByTagName('tr');
+
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent.toLowerCase();
+
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+          row.style.animation = 'searchHighlight 0.5s ease-out';
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    });
+
+    // Add search highlight animation
+    const style = document.createElement('style');
+    style.textContent = `
+            @keyframes searchHighlight {
+                0% { background: rgba(102, 126, 234, 0.3); }
+                100% { background: transparent; }
+            }
+        `;
+    document.head.appendChild(style);
+
+    // Update statistics dynamically
+    function updateStats() {
+      const rows = document.querySelectorAll('#medicineTable tbody tr');
+      let inStock = 0, lowStock = 0, outStock = 0;
+
+      rows.forEach(row => {
+        const statusElement = row.querySelector('.status-badge');
+        if (statusElement.classList.contains('in-stock')) inStock++;
+        else if (statusElement.classList.contains('low-stock')) lowStock++;
+        else if (statusElement.classList.contains('out-of-stock')) outStock++;
+      });
+
+      document.getElementById('inStockCount').textContent = inStock;
+      document.getElementById('lowStockCount').textContent = lowStock;
+      document.getElementById('outStockCount').textContent = outStock;
+      document.getElementById('totalCount').textContent = inStock + lowStock + outStock;
+    }
+
+    // Initialize stats
+    updateStats();
+
+    // Add hover effects to table rows
+    document.querySelectorAll('#medicineTable tbody tr').forEach(row => {
+      row.addEventListener('mouseenter', function () {
+        this.style.transform = 'scale(1.02)';
+        this.style.zIndex = '10';
+      });
+
+      row.addEventListener('mouseleave', function () {
+        this.style.transform = 'scale(1)';
+        this.style.zIndex = '1';
+      });
+    });
+
+    // Add click effect to status badges
+    document.querySelectorAll('.status-badge').forEach(badge => {
+      badge.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        ripple.style.position = 'absolute';
+        ripple.style.background = 'rgba(255, 255, 255, 0.5)';
+        ripple.style.borderRadius = '50%';
+        ripple.style.transform = 'scale(0)';
+        ripple.style.animation = 'rippleEffect 0.6s ease-out';
+        ripple.style.pointerEvents = 'none';
+
+        this.style.position = 'relative';
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+
+    // Add ripple effect keyframes
+    const rippleStyle = document.createElement('style');
+    rippleStyle.textContent = `
+            @keyframes rippleEffect {
+                from {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: scale(1);
+                    opacity: 0;
+                }
+            }
+        `;
+    document.head.appendChild(rippleStyle);
+  </script>
+</body>
+
+</html>

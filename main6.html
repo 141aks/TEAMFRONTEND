@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Meet Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .meet-controls {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #4285f4, #34a853);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #3367d6, #2e7d32);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .meet-frame-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meet-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 10px;
+            background: #f8f9fa;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .meet-iframe.loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 600px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+        }
+
+        .placeholder .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .placeholder h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .placeholder p {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-ready {
+            background: rgba(52, 168, 83, 0.8);
+            color: white;
+        }
+
+        .status-loading {
+            background: rgba(255, 193, 7, 0.8);
+            color: black;
+        }
+
+        .status-error {
+            background: rgba(234, 67, 53, 0.8);
+            color: white;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-panel h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-panel ul {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        .info-panel li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group input {
+                min-width: unset;
+            }
+            
+            .meet-iframe {
+                height: 400px;
+            }
+            
+            .placeholder {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎥 Google Meet Integration</h1>
+        <p>Embed Google Meet directly into your webpage</p>
+    </div>
+
+    <div class="container">
+        <div class="meet-controls">
+            <div class="input-group">
+                <input type="text" id="meetUrl" placeholder="Enter Google Meet URL (e.g., https://meet.google.com/abc-defg-hij)" />
+                <button class="btn" onclick="loadMeet()">Load Meeting</button>
+            </div>
+            <div class="input-group">
+                <button class="btn" onclick="createNewMeet()">Create New Meeting</button>
+                <button class="btn" onclick="clearMeet()">Clear</button>
+            </div>
+        </div>
+
+        <div class="meet-frame-container">
+            <div class="status-indicator status-ready" id="statusIndicator">Ready</div>
+            <div class="placeholder" id="placeholder">
+                <div class="icon">📹</div>
+                <h3>Google Meet Ready</h3>
+                <p>Enter a Google Meet URL above or create a new meeting to get started</p>
+            </div>
+            <iframe id="meetIframe" class="meet-iframe" style="display: none;" src="" allow="camera; microphone; fullscreen; speaker; display-capture"></iframe>
+        </div>
+
+        <div class="info-panel">
+            <h3>📋 Integration Features</h3>
+            <ul>
+                <li><strong>Direct iframe embedding</strong> - Load any Google Meet URL directly</li>
+                <li><strong>Responsive design</strong> - Works on desktop and mobile devices</li>
+                <li><strong>Camera & microphone permissions</strong> - Properly configured iframe attributes</li>
+                <li><strong>Fullscreen support</strong> - Allow users to expand to full screen</li>
+                <li><strong>Real-time status indicators</strong> - Visual feedback for loading states</li>
+                <li><strong>Modern UI</strong> - Glassmorphism design with smooth animations</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(status, message) {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.className = `status-indicator status-${status}`;
+            indicator.textContent = message;
+        }
+
+        function showPlaceholder() {
+            document.getElementById('placeholder').style.display = 'flex';
+            document.getElementById('meetIframe').style.display = 'none';
+        }
+
+        function hidePlaceholder() {
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('meetIframe').style.display = 'block';
+        }
+
+        function loadMeet() {
+            const meetUrl = document.getElementById('meetUrl').value.trim();
+            
+            if (!meetUrl) {
+                alert('Please enter a Google Meet URL');
+                return;
+            }
+
+            if (!meetUrl.includes('meet.google.com')) {
+                alert('Please enter a valid Google Meet URL');
+                return;
+            }
+
+            updateStatus('loading', 'Loading...');
+            const iframe = document.getElementById('meetIframe');
+            iframe.classList.add('loading');
+            
+            // Add necessary parameters for embedding
+            let embedUrl = meetUrl;
+            if (!embedUrl.includes('?')) {
+                embedUrl += '?embed=true';
+            } else {
+                embedUrl += '&embed=true';
+            }
+
+            iframe.src = embedUrl;
+            hidePlaceholder();
+
+            // Simulate loading completion (in real implementation, you'd listen for iframe load event)
+            setTimeout(() => {
+                iframe.classList.remove('loading');
+                updateStatus('ready', 'Connected');
+            }, 2000);
+        }
+
+        function createNewMeet() {
+            // In a real implementation, you would use Google Meet API to create a new meeting
+            const newMeetUrl = 'https://meet.google.com/new';
+            document.getElementById('meetUrl').value = newMeetUrl;
+            
+            updateStatus('loading', 'Creating...');
+            
+            // Simulate meeting creation
+            setTimeout(() => {
+                alert('In a production environment, this would use the Google Meet API to create a new meeting room and return the meeting URL.');
+                updateStatus('ready', 'Ready');
+            }, 1000);
+        }
+
+        function clearMeet() {
+            document.getElementById('meetUrl').value = '';
+            document.getElementById('meetIframe').src = '';
+            showPlaceholder();
+            updateStatus('ready', 'Ready');
+        }
+
+        // Handle iframe load events
+        document.getElementById('meetIframe').addEventListener('load', function() {
+            this.classList.remove('loading');
+            updateStatus('ready', 'Connected');
+        });
+
+        // Handle iframe errors
+        document.getElementById('meetIframe').addEventListener('error', function() {
+            this.classList.remove('loading');
+            updateStatus('error', 'Error');
+            showPlaceholder();
+        });
+
+        // Auto-resize iframe based on container
+        window.addEventListener('resize', function() {
+            const iframe = document.getElementById('meetIframe');
+            // Additional resize logic can be added here
+        });
+    </script>
+</body>
+</html>

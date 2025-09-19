@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Symptom Checker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      background: white;
+      width: 400px;
+      height: 600px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #2563eb;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f9fafb;
+    }
+    .msg {
+      max-width: 70%;
+      padding: 10px 15px;
+      margin: 8px 0;
+      border-radius: 20px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      display: inline-block;
+      clear: both;
+    }
+    .ai {
+      background: #e5e7eb;
+      color: #111827;
+      float: left;
+      border-bottom-left-radius: 5px;
+    }
+    .user {
+      background: #2563eb;
+      color: white;
+      float: right;
+      border-bottom-right-radius: 5px;
+    }
+    .chat-footer {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background: #fff;
+    }
+    .chat-footer input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+    .chat-footer button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">💬 AI Symptom Checker</div>
+  <div class="chat-body">
+    <div class="msg ai">Hello! Please describe your symptoms.</div>
+    <div class="msg user">I have a headache and mild fever.</div>
+    <div class="msg ai">Do you also feel tired or have body aches?</div>
+    <div class="msg user">Yes, I feel weak.</div>
+    <div class="msg ai">It may be a viral infection. Drink fluids and rest. If symptoms persist, consult a doctor.</div>
+  </div>
+  <div class="chat-footer">
+    <input type="text" placeholder="Type your symptoms..." disabled>
+    <button>➤</button>
+  </div>
+</div>
+
+</body>
+</html>
